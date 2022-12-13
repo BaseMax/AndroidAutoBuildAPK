@@ -14,6 +14,8 @@ You maybe not want to auto-build APK for every push, so you can change the workf
 
 ## How to use
 
+**Build after every push:**
+
 ```yml
 name: Build project after push
 
@@ -23,6 +25,63 @@ on:
       - main
 jobs:
   build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: Build debug APK
+        run: bash ./gradlew assembleDebug --stacktrace
+
+      - name: Check files
+        run: ls -al app/build/outputs/apk/debug
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        with:
+          tag_name: ${{ github.run_number }}
+          release_name: ${{ github.event.repository.name }} v${{ github.run_number }}
+
+      - name: Upload Release APK
+        id: upload_release_asset
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: app/build/outputs/apk/debug/app-debug.apk
+          asset_name: ${{ github.event.repository.name }}.apk
+          asset_content_type: application/vnd.android.package-archive
+```
+
+**Build after every comment in issue #1:**
+
+```
+name: Build project after push
+
+on:
+  issue_comment:
+    types: [ created, edited ]
+
+jobs:
+  build:
+    if: ${{ !github.event.issue.pull_request && github.event.issue.number == 1 }}
     runs-on: ubuntu-latest
 
     steps:
