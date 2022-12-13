@@ -1,9 +1,9 @@
 name: Build project after push
 
 on:
-  issue_commenton:
-    issue_comment:
-      types: [ created, edited ]
+  issue_comment:
+    types: [ created, edited ]
+
 jobs:
   build:
     if: ${{ !github.event.issue.pull_request && github.event.issue.number == 1 }}
