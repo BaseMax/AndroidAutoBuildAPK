@@ -1,30 +1,33 @@
 # Android Auto-Build APK
 
-This is an example of how to build an APK using GitHub Actions. 
-Here, we created a simple Android application that displays a Hello World!. 
+This is an example of how to build an APK using GitHub Actions.
+Here, we created a simple Android application that displays a Hello World!.
 We then created a workflow that builds the APK and uploads it as a new release.
 
+You maybe not want to auto-build APK for every push, so you can change the workflow to run on every push to a specific branch. For example, you can change the workflow to run on every push to the `main` branch suppose that you are working on `dev` branch in development mode.
+
+> Another idea is to write a comment in [this issue](https://github.com/BaseMax/AndroidAutoBuildAPK/issues/1) to trigger the workflow. By this way, you can ask workflow to build APK for you any time you want.
 
 | Hello World! | 
 | :---: | 
 | ![](screenshots/1.png) | 
 
-
-
-
 ## How to use
 
 ```yml
+name: Build project after push
+
 on:
   push:
     branches:
       - main
-name: Build project after push
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
+
       - name: set up JDK 11
         uses: actions/setup-java@v3
         with:
@@ -34,8 +37,10 @@ jobs:
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+
       - name: Build with Gradle
         run: ./gradlew build
+
       - name: Build debug APK
         run: bash ./gradlew assembleDebug --stacktrace
 
