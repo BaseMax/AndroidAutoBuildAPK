@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    if: ${{ !github.event.issue.pull_request && github.event.issue.number == 1 }}
+    if: ${{ !github.event.issue.pull_request && github.event.issue.number == 2 }}
     runs-on: ubuntu-latest
 
     steps:
