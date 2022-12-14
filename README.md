@@ -72,7 +72,7 @@ jobs:
 
 **Build after every comment in issue #1:**
 
-```
+```yml
 name: Build project after push
 
 on:
