@@ -1,4 +1,4 @@
-name: Build project after push
+name: Build project after pushf
 
 on:
   issue_comment:
